@@ -1,3 +1,5 @@
+use nbstripout_rust;
+
 fn main() {
-    println!("Hello, world!");
+    nbstripout_rust::run();
 }
