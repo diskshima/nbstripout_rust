@@ -92,4 +92,67 @@ mod tests {
             assert_eq!(cell["metadata"], object!{});
         }
     }
+
+    #[test]
+    fn remove_execution_count() {
+        let filename = String::from("sample/fibonacci_colab.ipynb");
+
+        let config = Config {
+            colab: false,
+            execution_count: true,
+            filename,
+            outputs: false,
+            textconv: false,
+            whitespace: 1,
+        };
+
+        let output_json = process_filename_to_json(&config);
+
+        let cells = &output_json["cells"];
+
+        for cell in cells.members() {
+            assert_eq!(cell["execution_count"], JsonValue::Null);
+        }
+    }
+
+    #[test]
+    fn remove_outputs() {
+        let filename = String::from("sample/fibonacci_colab.ipynb");
+
+        let config = Config {
+            colab: false,
+            execution_count: false,
+            filename,
+            outputs: true,
+            textconv: false,
+            whitespace: 1,
+        };
+
+        let output_json = process_filename_to_json(&config);
+
+        let cells = &output_json["cells"];
+
+        for cell in cells.members() {
+            assert_eq!(cell["outputs"], array!{});
+        }
+    }
+
+    #[test]
+    fn remove_colab() {
+        let filename = String::from("sample/fibonacci_colab.ipynb");
+
+        let config = Config {
+            colab: true,
+            execution_count: false,
+            filename,
+            outputs: false,
+            textconv: false,
+            whitespace: 1,
+        };
+
+        let output_json = process_filename_to_json(&config);
+
+        assert!(output_json["metadata"]["colab"].is_null());
+        assert!(output_json["metadata"]["accelerator"].is_null());
+    }
 }
