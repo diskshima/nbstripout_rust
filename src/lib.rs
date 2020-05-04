@@ -15,8 +15,9 @@ pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
     // TODO: Stripout elements.
     let json = stripout(json);
 
-    // TODO: Print (for now).
     println!("{}", json::stringify_pretty(json, 1));
+
+    // TODO: Add option to save to file.
 
     Ok(())
 }
