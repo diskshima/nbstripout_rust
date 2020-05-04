@@ -14,9 +14,9 @@ pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
 
     let json = json::parse(&content)?;
 
-    // TODO: Stripout elements.
     let json = stripout(json);
 
+    // TODO: Add option to configure whitespaces.
     println!("{}", json::stringify_pretty(json, 1));
 
     // TODO: Add option to save to file.
@@ -33,7 +33,10 @@ fn stripout(mut json: JsonValue) -> JsonValue {
         cell["execution_count"] = JsonValue::Null;
     }
 
+    let metadata = &mut json["metadata"];
+
+    metadata.remove("accelerator");
+    metadata.remove("colab");
+
     json
-    // TODO: Strip Google Colab
-    // TODO: Strip Google Colab accelerator
 }
