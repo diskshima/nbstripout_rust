@@ -2,8 +2,8 @@ use std::error::Error;
 use std::fs;
 
 use json::array;
-use json::JsonValue;
 use json::object;
+use json::JsonValue;
 
 pub struct Config {
     pub colab: bool,
@@ -40,7 +40,7 @@ fn stripout(mut json: JsonValue, config: &Config) -> JsonValue {
     let cells = &mut json["cells"];
 
     for cell in cells.members_mut() {
-        cell["metadata"] = object!{};
+        cell["metadata"] = object! {};
 
         if config.outputs {
             cell["outputs"] = array![];
@@ -89,7 +89,7 @@ mod tests {
         let cells = &output_json["cells"];
 
         for cell in cells.members() {
-            assert_eq!(cell["metadata"], object!{});
+            assert_eq!(cell["metadata"], object! {});
         }
     }
 
@@ -133,7 +133,7 @@ mod tests {
         let cells = &output_json["cells"];
 
         for cell in cells.members() {
-            assert_eq!(cell["outputs"], array!{});
+            assert_eq!(cell["outputs"], array! {});
         }
     }
 

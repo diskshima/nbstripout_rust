@@ -1,6 +1,6 @@
 use std::process;
 
-use clap::{Arg, App};
+use clap::{App, Arg};
 
 use nbstripout_rust;
 use nbstripout_rust::Config;
@@ -22,44 +22,66 @@ fn main() {
 }
 
 fn config_from_args() -> Result<Config, &'static str> {
-   let matches = App::new("nbstripout-rust")
-                          .version("0.1.0")
-                          .author("Daisuke Shimamoto <diskshima@gmail.com>")
-                          .about("nbstripout implemented in Rust")
-                          .arg(Arg::with_name("colab")
-                               .short('c')
-                               .long("colab")
-                               .about("Strip colab"))
-                          .arg(Arg::with_name("execution_count")
-                               .short('e')
-                               .long("execution-count")
-                               .about("Strip execution_count"))
-                          .arg(Arg::with_name("outputs")
-                               .short('o')
-                               .long("outputs")
-                               .about("Strip outputs"))
-                          .arg(Arg::with_name("textconv")
-                              .short('t')
-                              .long("textconv")
-                              .about("Output to standard out instead of overwriting the file"))
-                          .arg(Arg::with_name("whitespace")
-                               .short('w')
-                               .long("whitespace")
-                               .about("Set number of whitespaces for idents")
-                               .takes_value(true))
-                          .arg(Arg::with_name("input_file")
-                               .about("Sets the input file to use")
-                               .required(true)
-                               .index(1))
-                          .get_matches();
+    let matches = App::new("nbstripout-rust")
+        .version("0.1.0")
+        .author("Daisuke Shimamoto <diskshima@gmail.com>")
+        .about("nbstripout implemented in Rust")
+        .arg(
+            Arg::with_name("colab")
+                .short('c')
+                .long("colab")
+                .about("Strip colab"),
+        )
+        .arg(
+            Arg::with_name("execution_count")
+                .short('e')
+                .long("execution-count")
+                .about("Strip execution_count"),
+        )
+        .arg(
+            Arg::with_name("outputs")
+                .short('o')
+                .long("outputs")
+                .about("Strip outputs"),
+        )
+        .arg(
+            Arg::with_name("textconv")
+                .short('t')
+                .long("textconv")
+                .about("Output to standard out instead of overwriting the file"),
+        )
+        .arg(
+            Arg::with_name("whitespace")
+                .short('w')
+                .long("whitespace")
+                .about("Set number of whitespaces for idents")
+                .takes_value(true),
+        )
+        .arg(
+            Arg::with_name("input_file")
+                .about("Sets the input file to use")
+                .required(true)
+                .index(1),
+        )
+        .get_matches();
 
     let colab = matches.is_present("colab");
     let execution_count = matches.is_present("execution_count");
     let outputs = matches.is_present("outputs");
     let textconv = matches.is_present("textconv");
-    let whitespace: u16 = matches.value_of("whitespace")
-        .unwrap_or("1").parse().unwrap();
+    let whitespace: u16 = matches
+        .value_of("whitespace")
+        .unwrap_or("1")
+        .parse()
+        .unwrap();
     let filename = matches.value_of("input_file").unwrap().to_string();
 
-    Ok(Config { colab, execution_count, filename, outputs, textconv, whitespace })
+    Ok(Config {
+        colab,
+        execution_count,
+        filename,
+        outputs,
+        textconv,
+        whitespace,
+    })
 }
