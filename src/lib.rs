@@ -65,7 +65,31 @@ fn stripout(mut json: JsonValue, config: &Config) -> JsonValue {
 mod tests {
     use super::*;
 
+    fn process_filename_to_json(config: &Config) -> JsonValue {
+        let content = fs::read_to_string(&config.filename).unwrap();
+        let output = process_string(&content, &config).unwrap();
+        json::parse(&output).unwrap()
+    }
+
     #[test]
-    fn a() {
+    fn remove_cell_metadata() {
+        let filename = String::from("sample/fibonacci_colab.ipynb");
+
+        let config = Config {
+            colab: false,
+            execution_count: false,
+            filename,
+            outputs: false,
+            textconv: false,
+            whitespace: 1,
+        };
+
+        let output_json = process_filename_to_json(&config);
+
+        let cells = &output_json["cells"];
+
+        for cell in cells.members() {
+            assert_eq!(cell["metadata"], object!{});
+        }
     }
 }
