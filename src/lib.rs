@@ -10,6 +10,7 @@ pub struct Config {
     pub execution_count: bool,
     pub filename: String,
     pub outputs: bool,
+    pub textconv: bool,
     pub whitespace: u16,
 }
 
@@ -20,9 +21,13 @@ pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
 
     let json = stripout(json, &config);
 
-    println!("{}", json::stringify_pretty(json, config.whitespace));
+    let output = json::stringify_pretty(json, config.whitespace);
 
-    // TODO: Add option to save to file.
+    if config.textconv {
+        println!("{}", output);
+    } else {
+        fs::write(config.filename, output)?;
+    }
 
     Ok(())
 }
