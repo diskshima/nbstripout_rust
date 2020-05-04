@@ -10,6 +10,7 @@ pub struct Config {
     pub execution_count: bool,
     pub filename: String,
     pub outputs: bool,
+    pub whitespace: u16,
 }
 
 pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
@@ -19,8 +20,7 @@ pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
 
     let json = stripout(json, &config);
 
-    // TODO: Add option to configure whitespaces.
-    println!("{}", json::stringify_pretty(json, 1));
+    println!("{}", json::stringify_pretty(json, config.whitespace));
 
     // TODO: Add option to save to file.
 

@@ -38,6 +38,11 @@ fn config_from_args() -> Result<Config, &'static str> {
                                .short('o')
                                .long("outputs")
                                .about("Strip outputs"))
+                          .arg(Arg::with_name("whitespace")
+                               .short('w')
+                               .long("whitespace")
+                               .about("Set number of whitespaces for idents")
+                               .takes_value(true))
                           .arg(Arg::with_name("input_file")
                                .about("Sets the input file to use")
                                .required(true)
@@ -48,6 +53,8 @@ fn config_from_args() -> Result<Config, &'static str> {
     let execution_count = matches.is_present("execution_count");
     let outputs = matches.is_present("outputs");
     let filename = matches.value_of("input_file").unwrap().to_string();
+    let whitespace: u16 = matches.value_of("whitespace")
+        .unwrap_or("1").parse().unwrap();
 
-    Ok(Config { colab, execution_count, filename, outputs })
+    Ok(Config { colab, execution_count, filename, outputs, whitespace })
 }
