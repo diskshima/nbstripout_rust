@@ -17,11 +17,7 @@ pub struct Config {
 pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
     let content = fs::read_to_string(&config.filename)?;
 
-    let json = json::parse(&content)?;
-
-    let json = stripout(json, &config);
-
-    let output = json::stringify_pretty(json, config.whitespace);
+    let output = process_string(&content, &config)?;
 
     if config.textconv {
         println!("{}", output);
@@ -30,6 +26,14 @@ pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
     }
 
     Ok(())
+}
+
+fn process_string(content: &String, config: &Config) -> Result<String, Box<dyn Error>> {
+    let json = json::parse(&content)?;
+
+    let json = stripout(json, &config);
+
+    Ok(json::stringify_pretty(json, config.whitespace))
 }
 
 fn stripout(mut json: JsonValue, config: &Config) -> JsonValue {
@@ -55,4 +59,13 @@ fn stripout(mut json: JsonValue, config: &Config) -> JsonValue {
     }
 
     json
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn a() {
+    }
 }
