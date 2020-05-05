@@ -5,6 +5,8 @@ use clap::{App, Arg};
 use nbstripout_rust;
 use nbstripout_rust::Config;
 
+const VERSION: &'static str = env!("CARGO_PKG_VERSION");
+
 fn main() {
     let config = match config_from_args() {
         Ok(config) => config,
@@ -23,7 +25,7 @@ fn main() {
 
 fn config_from_args() -> Result<Config, &'static str> {
     let matches = App::new("nbstripout-rust")
-        .version("0.1.0")
+        .version(VERSION)
         .author("Daisuke Shimamoto <diskshima@gmail.com>")
         .about("nbstripout implemented in Rust")
         .arg(
