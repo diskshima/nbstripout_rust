@@ -2,10 +2,9 @@ use std::process;
 
 use clap::{App, Arg};
 
-use nbstripout_rust;
 use nbstripout_rust::Config;
 
-const VERSION: &'static str = env!("CARGO_PKG_VERSION");
+const VERSION: &str = env!("CARGO_PKG_VERSION");
 
 fn main() {
     let config = match config_from_args() {

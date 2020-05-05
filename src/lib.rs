@@ -48,7 +48,7 @@ fn read_content(config: &Config) -> Result<String, Box<dyn Error>> {
     Ok(content)
 }
 
-fn process_string(content: &String, config: &Config) -> Result<String, Box<dyn Error>> {
+fn process_string(content: &str, config: &Config) -> Result<String, Box<dyn Error>> {
     let json = json::parse(&content)?;
 
     let json = stripout(json, &config);
