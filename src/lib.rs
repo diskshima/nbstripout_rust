@@ -36,7 +36,12 @@ fn read_content(config: &Config) -> Result<String, Box<dyn Error>> {
     } else {
         match &config.filename {
             Some(filename) => fs::read_to_string(filename).unwrap(),
-            None => return Err(Box::new(io::Error::new(io::ErrorKind::Other, "Filename not specified."))),
+            None => {
+                return Err(Box::new(io::Error::new(
+                    io::ErrorKind::Other,
+                    "Filename not specified.",
+                )))
+            }
         }
     };
 
