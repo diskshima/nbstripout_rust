@@ -6,7 +6,7 @@ nbstripout implementation in Rust.
 
 ```bash
 $ nbstripout_rust --help
-nbstripout-rust 0.1.0
+nbstripout-rust 1.0.0
 Daisuke Shimamoto <diskshima@gmail.com>
 nbstripout implemented in Rust
 
