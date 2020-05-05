@@ -81,8 +81,8 @@ mod tests {
     use super::*;
 
     fn process_filename_to_json(config: &Config) -> JsonValue {
-        let tmp_fn = config.filename.as_ref().unwrap();
-        let content = fs::read_to_string(tmp_fn).unwrap();
+        let filename = config.filename.as_ref().unwrap();
+        let content = fs::read_to_string(filename).unwrap();
         let output = process_string(&content, &config).unwrap();
         json::parse(&output).unwrap()
     }
