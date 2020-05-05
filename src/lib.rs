@@ -1,31 +1,46 @@
 use std::error::Error;
 use std::fs;
+use std::io::{self, Read};
 
-use json::array;
-use json::object;
-use json::JsonValue;
+use json::{array, object, JsonValue};
 
 pub struct Config {
     pub colab: bool,
     pub execution_count: bool,
-    pub filename: String,
+    pub filename: Option<String>,
     pub outputs: bool,
     pub textconv: bool,
+    pub use_stdin: bool,
     pub whitespace: u16,
 }
 
 pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
-    let content = fs::read_to_string(&config.filename)?;
+    let content = read_content(&config)?;
 
     let output = process_string(&content, &config)?;
 
-    if config.textconv {
+    if config.textconv || config.use_stdin {
         println!("{}", output);
     } else {
-        fs::write(config.filename, output)?;
+        fs::write(config.filename.unwrap(), output)?;
     }
 
     Ok(())
+}
+
+fn read_content(config: &Config) -> Result<String, Box<dyn Error>> {
+    let content = if config.use_stdin {
+        let mut content = String::new();
+        io::stdin().read_to_string(&mut content)?;
+        content
+    } else {
+        match &config.filename {
+            Some(filename) => fs::read_to_string(filename).unwrap(),
+            None => return Err(Box::new(io::Error::new(io::ErrorKind::Other, "Filename not specified."))),
+        }
+    };
+
+    Ok(content)
 }
 
 fn process_string(content: &String, config: &Config) -> Result<String, Box<dyn Error>> {
@@ -66,21 +81,25 @@ mod tests {
     use super::*;
 
     fn process_filename_to_json(config: &Config) -> JsonValue {
-        let content = fs::read_to_string(&config.filename).unwrap();
+        let tmp_fn = config.filename.as_ref().unwrap();
+        let content = fs::read_to_string(tmp_fn).unwrap();
         let output = process_string(&content, &config).unwrap();
         json::parse(&output).unwrap()
     }
 
+    fn sample_file() -> Option<String> {
+        Some(String::from("sample/fibonacci_colab.ipynb"))
+    }
+
     #[test]
     fn remove_cell_metadata() {
-        let filename = String::from("sample/fibonacci_colab.ipynb");
-
         let config = Config {
             colab: false,
             execution_count: false,
-            filename,
+            filename: sample_file(),
             outputs: false,
             textconv: false,
+            use_stdin: false,
             whitespace: 1,
         };
 
@@ -95,14 +114,13 @@ mod tests {
 
     #[test]
     fn remove_execution_count() {
-        let filename = String::from("sample/fibonacci_colab.ipynb");
-
         let config = Config {
             colab: false,
             execution_count: true,
-            filename,
+            filename: sample_file(),
             outputs: false,
             textconv: false,
+            use_stdin: false,
             whitespace: 1,
         };
 
@@ -117,14 +135,13 @@ mod tests {
 
     #[test]
     fn remove_outputs() {
-        let filename = String::from("sample/fibonacci_colab.ipynb");
-
         let config = Config {
             colab: false,
             execution_count: false,
-            filename,
+            filename: sample_file(),
             outputs: true,
             textconv: false,
+            use_stdin: false,
             whitespace: 1,
         };
 
@@ -139,14 +156,13 @@ mod tests {
 
     #[test]
     fn remove_colab() {
-        let filename = String::from("sample/fibonacci_colab.ipynb");
-
         let config = Config {
             colab: true,
             execution_count: false,
-            filename,
+            filename: sample_file(),
             outputs: false,
             textconv: false,
+            use_stdin: false,
             whitespace: 1,
         };
 

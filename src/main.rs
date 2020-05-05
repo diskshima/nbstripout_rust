@@ -60,7 +60,6 @@ fn config_from_args() -> Result<Config, &'static str> {
         .arg(
             Arg::with_name("input_file")
                 .about("Sets the input file to use")
-                .required(true)
                 .index(1),
         )
         .get_matches();
@@ -74,7 +73,13 @@ fn config_from_args() -> Result<Config, &'static str> {
         .unwrap_or("1")
         .parse()
         .unwrap();
-    let filename = matches.value_of("input_file").unwrap().to_string();
+
+    let filename = match matches.value_of("input_file") {
+        Some(filename) => Some(filename.to_string()),
+        None => None,
+    };
+
+    let use_stdin = filename.is_none();
 
     Ok(Config {
         colab,
@@ -82,6 +87,7 @@ fn config_from_args() -> Result<Config, &'static str> {
         filename,
         outputs,
         textconv,
+        use_stdin,
         whitespace,
     })
 }
