@@ -11,10 +11,10 @@ Daisuke Shimamoto <diskshima@gmail.com>
 nbstripout implemented in Rust
 
 USAGE:
-    nbstripout_rust [FLAGS] [OPTIONS] <input_file>
+    nbstripout_rust [FLAGS] [OPTIONS] [input_file]
 
 ARGS:
-    <input_file>    Sets the input file to use
+    <input_file>    Sets the input file to use. If not specified, the program will try to read from standard input.
 
 FLAGS:
     -c, --colab              Strip colab
