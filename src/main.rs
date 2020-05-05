@@ -59,7 +59,7 @@ fn config_from_args() -> Result<Config, &'static str> {
         )
         .arg(
             Arg::with_name("input_file")
-                .about("Sets the input file to use")
+                .about("Sets the input file to use. If not specified, the program will try to read from standard input.")
                 .index(1),
         )
         .get_matches();
