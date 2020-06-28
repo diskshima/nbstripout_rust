@@ -60,13 +60,14 @@ fn stripout(mut json: JsonValue, config: &Config) -> JsonValue {
     let cells = &mut json["cells"];
 
     for cell in cells.members_mut() {
+        let cell_type = cell["cell_type"].clone();
         cell["metadata"] = object! {};
 
-        if config.outputs {
+        if cell_type == "code" && config.outputs {
             cell["outputs"] = array![];
         }
 
-        if config.execution_count {
+        if cell_type == "code" && config.execution_count {
             cell["execution_count"] = JsonValue::Null;
         }
     }
@@ -155,7 +156,9 @@ mod tests {
         let cells = &output_json["cells"];
 
         for cell in cells.members() {
-            assert_eq!(cell["outputs"], array! {});
+            if cell["cell_type"] == "code" {
+                assert_eq!(cell["outputs"], array! {});
+            }
         }
     }
 
@@ -175,5 +178,29 @@ mod tests {
 
         assert!(output_json["metadata"]["colab"].is_null());
         assert!(output_json["metadata"]["accelerator"].is_null());
+    }
+
+    #[test]
+    fn markdown_cell_should_not_have_execution_count_and_outputs() {
+        let config = Config {
+            colab: false,
+            execution_count: true,
+            filename: sample_file(),
+            outputs: true,
+            textconv: false,
+            use_stdin: false,
+            whitespace: 1,
+        };
+
+        let output_json = process_filename_to_json(&config);
+
+        let cells = &output_json["cells"];
+
+        for cell in cells.members() {
+            if cell["cell_type"] == "markdown" {
+                assert!(cell["execution_count"].is_null());
+                assert!(cell["outputs"].is_null());
+            }
+        }
     }
 }
